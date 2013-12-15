@@ -5,9 +5,8 @@ import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as LZ
 import Data.Word (Word16)
 import Control.Monad (foldM)
-import Data.Binary (get,Binary,Get)
+import Data.Binary (get,Binary,Get,encode)
 import Data.Binary.Get (runGetOrFail)
-import qualified Data.Serialize as Serialize
 import Control.Applicative ( (<$>) )
 
 import Crypto.Hash.SHA1 as SHA1
@@ -62,7 +61,8 @@ decryptSecretKey pass k@(OpenPGP.SecretKeyPacket {
     (material, chk) = LZ.splitAt (LZ.length decd - chkSize) decd
     (chkSize, chkF)
         | OpenPGP.s2k_useage k == 254 = (20, SHA1.hash . toStrictBS)
-        | otherwise = (2, Serialize.encode . checksum . toStrictBS)
+        | otherwise = (2, toStrictBS . encode . checksum . toStrictBS)
+        -- Words16s are written as 2 bytes in big-endian (network) order
     decd = string2sdecrypt salgo s2k (toLazyBS pass) (EncipheredWithIV encd)
 
     checksum :: BS.ByteString -> Word16
