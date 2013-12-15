@@ -1,0 +1,51 @@
+name:            openpgp-util
+version:         0.1
+cabal-version:   >= 1.8
+license:         OtherLicense
+license-file:    COPYING
+category:        Cryptography
+copyright:       © 2012 Stephen Paul Weber
+                 © 2013 Joseph Crayne
+author:          Stephen Paul Weber <singpolyma@singpolyma.net>
+maintainer:      Joe Crayne <joe@jerkface.net>
+stability:       experimental
+tested-with:     GHC == 7.0.3
+synopsis:        Implement cryptography for OpenPGP using libraries compatible
+                 with Vincent Hanquez's Haskell Crypto Platform
+homepage:        http://github.com/joecrayne/openpgp-util
+bug-reports:     http://github.com/joecrayne/openpgp-util/issues
+build-type:      Simple
+description:
+        Fingerprint generation, signature generation, signature verification,
+        and secret key decryption for OpenPGP Packets.
+        .
+        It is indended to be used with <http://hackage.haskell.org/package/openpgp>
+        .
+        It is intended that you use qualified imports with this library.
+        .
+        > import qualified Data.OpenPGP.Util as OpenPGP
+
+library
+        exposed-modules:
+                Data.OpenPGP.Util
+
+        build-depends:
+                base == 4.*,
+                transformers,
+                bytestring,
+                time >= 1.4,
+                binary >= 0.6.4.0,
+                openpgp >= 0.6,
+                crypto-random >= 0.0.7,
+                cryptohash >= 0.9.1,
+                crypto-pubkey >= 0.2.3,
+                cipher-cast5 -any,
+                byteable,
+                crypto-cipher-types >= 0.0.9,
+                cipher-blowfish,
+                cipher-aes >= 0.2.6
+
+
+source-repository head
+        type:     git
+        location: git://github.com/joecrayne/openpgp-util.git
