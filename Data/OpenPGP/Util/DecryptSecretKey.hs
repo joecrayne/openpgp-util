@@ -3,22 +3,14 @@ module Data.OpenPGP.Util.DecryptSecretKey where
 import qualified Data.OpenPGP as OpenPGP
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as LZ
-import Data.Word (Word16,Word8)
-import Data.Char (toUpper)
+import Data.Word (Word16)
 import Control.Monad (foldM)
-import Numeric (showHex)
 import Data.Binary (get,Binary,Get)
 import Data.Binary.Get (runGetOrFail)
 import qualified Data.Serialize as Serialize
 import Control.Applicative ( (<$>) )
 
-import Crypto.Hash.MD5 as MD5
 import Crypto.Hash.SHA1 as SHA1
-import Crypto.Hash.SHA256 as SHA256
-import Crypto.Hash.SHA384 as SHA384
-import Crypto.Hash.SHA512 as SHA512
-import Crypto.Hash.SHA224 as SHA224
-import Crypto.Hash.RIPEMD160 as RIPEMD160
 
 import qualified Crypto.Cipher.AES as Vincent
 import qualified Crypto.Cipher.Blowfish as Vincent
@@ -28,15 +20,8 @@ import qualified Data.Byteable as Vincent
 
 import Crypto.Cipher.Cast5 (CAST5_128)
 import Crypto.Cipher.ThomasToVincent
+import Data.OpenPGP.Util.Base (toStrictBS,toLazyBS,hashBySymbol)
 
-
-hashBySymbol OpenPGP.MD5 = MD5.hashlazy
-hashBySymbol OpenPGP.SHA1 = SHA1.hashlazy
-hashBySymbol OpenPGP.SHA256 = SHA256.hashlazy
-hashBySymbol OpenPGP.SHA384 = SHA384.hashlazy
-hashBySymbol OpenPGP.SHA512 = SHA512.hashlazy
-hashBySymbol OpenPGP.SHA224 = SHA224.hashlazy
-hashBySymbol OpenPGP.RIPEMD160 = RIPEMD160.hashlazy
 
 
 
@@ -93,13 +78,6 @@ decryptSecretKey pass k@(OpenPGP.SecretKeyPacket {
 
 
 decryptSecretKey _ _ = Nothing
-
-toStrictBS :: LZ.ByteString -> BS.ByteString
-toStrictBS = BS.concat . LZ.toChunks
-
-toLazyBS :: BS.ByteString -> LZ.ByteString
-toLazyBS = LZ.fromChunks . (:[])
-
 
 
 string2sdecrypt :: OpenPGP.SymmetricAlgorithm -> OpenPGP.S2K -> LZ.ByteString -> Enciphered -> LZ.ByteString
