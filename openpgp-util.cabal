@@ -28,6 +28,12 @@ description:
 library
         exposed-modules:
                 Data.OpenPGP.Util
+        other-modules:
+                Data.OpenPGP.Util.Fingerprint
+                Data.OpenPGP.Util.Base
+                Data.OpenPGP.Util.Verify
+                Data.OpenPGP.Util.Sign
+                Data.OpenPGP.Util.DecryptSecretKey
 
         build-depends:
                 base == 4.*,
