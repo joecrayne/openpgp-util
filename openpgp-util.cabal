@@ -45,6 +45,7 @@ library
                 crypto-random >= 0.0.7,
                 cryptohash >= 0.9.1,
                 crypto-pubkey >= 0.2.3,
+                crypto-pubkey-types >= 0.4.1,
                 cipher-cast5 -any,
                 byteable,
                 crypto-cipher-types >= 0.0.9,

@@ -14,6 +14,8 @@ import Crypto.Hash.SHA224 as SHA224
 import Crypto.Hash.RIPEMD160 as RIPEMD160
 import qualified Crypto.PubKey.RSA as Vincent.RSA
 import Crypto.PubKey.HashDescr as Vincent
+import qualified Crypto.Types.PubKey.ECC as Vincent.ECDSA
+import qualified Crypto.Types.PubKey.ECDSA as Vincent.ECDSA
 
 import Data.OpenPGP.Util.Fingerprint (fingerprint)
 
@@ -24,6 +26,20 @@ hashBySymbol OpenPGP.SHA384 = SHA384.hashlazy
 hashBySymbol OpenPGP.SHA512 = SHA512.hashlazy
 hashBySymbol OpenPGP.SHA224 = SHA224.hashlazy
 hashBySymbol OpenPGP.RIPEMD160 = RIPEMD160.hashlazy
+
+curveFromOID :: Integer -> Vincent.ECDSA.Curve
+curveFromOID 0x2a8648ce3d030107 = Vincent.ECDSA.getCurveByName Vincent.ECDSA.SEC_p256r1 -- NIST P-256
+curveFromOID 0x2B81040022       = Vincent.ECDSA.getCurveByName Vincent.ECDSA.SEC_p384r1 -- NIST P-384
+curveFromOID 0x2B81040023       = Vincent.ECDSA.getCurveByName Vincent.ECDSA.SEC_p521r1 -- NIST P-521
+curveFromOID 0x2b8104000a       = Vincent.ECDSA.getCurveByName Vincent.ECDSA.SEC_p256k1 -- bitcoin curve
+curveFromOID n = error $ "Unknown curve: "++ show n
+
+ecdsaKey k = Vincent.ECDSA.PublicKey curve (Vincent.ECDSA.Point x y)
+ where
+    x = keyParam 'x' k
+    y = keyParam 'y' k
+    curve = curveFromOID (keyParam 'c' k)
+
 
 toStrictBS :: LZ.ByteString -> BS.ByteString
 toStrictBS = BS.concat . LZ.toChunks
