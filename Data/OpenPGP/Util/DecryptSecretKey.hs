@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 module Data.OpenPGP.Util.DecryptSecretKey where
 
 import qualified Data.OpenPGP as OpenPGP
@@ -6,7 +7,13 @@ import qualified Data.ByteString.Lazy as LZ
 import Data.Word (Word16)
 import Control.Monad (foldM)
 import Data.Binary (get,Binary,Get,encode)
+#if MIN_VERSION_binary(0,6,4)
 import Data.Binary.Get (runGetOrFail)
+#else
+import Control.Exception as Exception (handle,ErrorCall(..))
+import System.IO.Unsafe
+import Data.Binary.Get (runGet)
+#endif
 import Control.Applicative ( (<$>) )
 
 import Crypto.Hash.SHA1 as SHA1
@@ -69,15 +76,22 @@ decryptSecretKey pass k@(OpenPGP.SecretKeyPacket {
     checksum key = fromIntegral $
         BS.foldl' (\x y -> x + fromIntegral y) (0::Integer) key `mod` 65536
 
-    maybeGet :: (Binary a) => Get a -> LZ.ByteString -> Maybe a
-    maybeGet g bs = (\(_,_,x) -> x) <$> hush (runGetOrFail g bs)
+decryptSecretKey _ _ = Nothing
 
+
+#if MIN_VERSION_binary(0,6,4)
+maybeGet :: (Binary a) => Get a -> LZ.ByteString -> Maybe a
+maybeGet g bs = (\(_,_,x) -> x) <$> hush (runGetOrFail g bs)
+ where
     hush :: Either a b -> Maybe b
     hush (Left _) = Nothing
     hush (Right x) = Just x
+#else
+maybeGet :: (Binary a) => Get a -> LZ.ByteString -> Maybe a
+maybeGet g bs = unsafePerformIO $
+    handle (\(ErrorCall _)-> return Nothing) $ return . Just $ runGet g bs
+#endif
 
-
-decryptSecretKey _ _ = Nothing
 
 
 string2sdecrypt :: OpenPGP.SymmetricAlgorithm -> OpenPGP.S2K -> LZ.ByteString -> Enciphered -> LZ.ByteString

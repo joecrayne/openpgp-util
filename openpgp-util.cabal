@@ -40,15 +40,15 @@ library
                 transformers,
                 bytestring,
                 time >= 1.4,
-                binary >= 0.6.4.0,
-                openpgp >= 0.6,
+                binary >= 0.5.1.1,
+                openpgp >= 0.4,
                 crypto-random >= 0.0.7,
                 cryptohash >= 0.9.1,
                 crypto-pubkey >= 0.2.3,
                 crypto-pubkey-types >= 0.4.1,
                 cipher-cast5 -any,
                 byteable,
-                crypto-cipher-types >= 0.0.9,
+                crypto-cipher-types >= 0.0.7,
                 cipher-blowfish,
                 cipher-aes >= 0.2.6
 
